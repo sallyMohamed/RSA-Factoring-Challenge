@@ -1,49 +1,38 @@
-#!/usr/bin/env bash
-# is a factors challenge
+#!/usr/bin/python3
+import sys
+import math
 
-check_factor()
-{
-	if [ $# -ne 3 ];
-        then
-                args=("$@")
-                count=0
-                num2=1
-                for a in ${args[*]};
-                do
-                        if [ $count -gt 1 ];
-                        then
-                                num2=$(echo $a*$num2 | bc)
-                        fi
-                        count=$((count + 1))
-                done
-        else
-                num2=$3
-        fi
+def prime_factors(n):
+    factors = []
+    while n % 2 == 0:
+        factors.append(2)
+        n = n // 2
+    for i in range(3, int(math.sqrt(n)) + 1, 2):
+        while n % i == 0:
+            factors.append(i)
+            n = n // i
+    if n > 2:
+        factors.append(n)
+    return factors
 
-        num1=$2
-        num=$(echo "$1" | tr ':' '=')
+def format_output(number, factors):
+    return f"{number}={'*'.join(map(str, factors))}"
 
-        result=$(echo "if($num2 > $num1) 1 else 0" | bc)
-	        if ((result == 1)); then
-		        numcp=$num1
-		        num1=$num2
-		        num2=$numcp
-                fi
+def calculate_factors(input_file):
+    with open(input_file, 'r') as file:
+        numbers = file.readlines()
 
-        echo "$num$num1*$num2"
-}
+    results = []
+    for number in numbers:
+        number = int(number.strip())
+        factors = prime_factors(number)
+        results.append(format_output(number, factors))
 
-if [ $# -ne 1 ]
-then
-        echo 'Usage: factors <file>'
-        exit 1
-else
+    return results
 
-        while read i
-        do
+if __name__ == '__main__':
+    input_file = 'tests/test00'
+    results = calculate_factors(input_file)
 
-                result=$(factor "$i")
-                check_factor $result
-
-        done < "$1"
-fi
+    for result in results:
+        print(result)
