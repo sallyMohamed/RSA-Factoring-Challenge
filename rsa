@@ -1,48 +1,26 @@
-#!/usr/bin/env bash
-#is a challenge
-check_factor()
-{
-	if [ $# -ne 3 ];
-        then
-                args=("$@")
-                count=0
-                num2=1
-                for a in ${args[*]};
-                do
-                        if [ $count -gt 1 ];
-                        then
-                                num2=$(echo $a*$num2 | bc)
-                        fi
-                        count=$((count + 1))
-                done
-        else
-                num2=$3
-        fi
+import math
 
-        num1=$2
-        num=$(echo "$1" | tr ':' '=')
+def factorize(n):
+    factors = []
+    
+    # Check if the number is divisible by 2
+    while n % 2 == 0:
+        factors.append(2)
+        n = n // 2
+    
+    # Check for odd prime factors
+    for i in range(3, int(math.sqrt(n)) + 1, 2):
+        while n % i == 0:
+            factors.append(i)
+            n = n // i
+    
+    # If n is still greater than 2, it is a prime factor
+    if n > 2:
+        factors.append(n)
+    
+    return factors
 
-        result=$(echo "if($num2 > $num1) 1 else 0" | bc)
-	        if ((result == 1)); then
-		        numcp=$num1
-		        num1=$num2
-		        num2=$numcp
-                fi
-
-        echo "$num$num1*$num2"
-}
-
-if [ $# -ne 1 ]
-then
-        echo 'Usage: rsa <file>'
-        exit 1
-else
-
-        while read i
-        do
-
-                result=$(factor "$i")
-                check_factor $result
-
-        done < "$1"
-fi
+# Example usage
+num = int(input("Enter the number to factorize: "))
+factors = factorize(num)
+print(f"{num} = {'*'.join(map(str, factors))}")
