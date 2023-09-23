@@ -1,38 +1,33 @@
 #!/usr/bin/python3
-import sys
-import math
+"""Module that factorize as many numbers as possible
+ into a product of two smaller numbers."""
+from sys import argv
 
-def prime_factors(n):
-    factors = []
-    while n % 2 == 0:
-        factors.append(2)
-        n = n // 2
-    for i in range(3, int(math.sqrt(n)) + 1, 2):
-        while n % i == 0:
-            factors.append(i)
-            n = n // i
-    if n > 2:
-        factors.append(n)
-    return factors
 
-def format_output(number, factors):
-    return f"{number}={'*'.join(map(str, factors))}"
+def factorize(value):
+    """"print a simple descomposition of an integer > 1"""
+    i = 2
 
-def calculate_factors(input_file):
-    with open(input_file, 'r') as file:
-        numbers = file.readlines()
+    if value < 2:
+        return
+    print()
+    print(value, "<- value-bef")
+    while value % i:
+        i += 1
+    print("{:.0f}={:.0f}*{:.0f}".format(value, value / i, i))
+    print(value, "<- value-aft")
+    print()
 
-    results = []
-    for number in numbers:
-        number = int(number.strip())
-        factors = prime_factors(number)
-        results.append(format_output(number, factors))
+if len(argv) != 2:
+    exit()
 
-    return results
+try:
+    with open(argv[1]) as file:
+        line = file.readline()
 
-if __name__ == '__main__':
-    input_file = 'tests/test00'
-    results = calculate_factors(input_file)
-
-    for result in results:
-        print(result)
+        while line != "":
+            value = int(line.split('\n')[0])
+            factorize(value)
+            line = file.readline()
+except:
+    pass
